@@ -1,3 +1,14 @@
+<?php
+// admin/index.php
+require_once "logado_admin.php"; // ← Caminho correto dentro de admin/
+require_once "conexao.php";
+
+// Busca contagens para o dashboard
+$total_cursos = mysqli_fetch_assoc(mysqli_query($conexao, "SELECT COUNT(*) as total FROM cursos"))["total"];
+$total_modulos = mysqli_fetch_assoc(mysqli_query($conexao, "SELECT COUNT(*) as total FROM modulos"))["total"];
+$total_aulas = mysqli_fetch_assoc(mysqli_query($conexao, "SELECT COUNT(*) as total FROM aulas"))["total"];
+$total_alunos = mysqli_fetch_assoc(mysqli_query($conexao, "SELECT COUNT(*) as total FROM usuarios WHERE tipo = 'aluno'"))["total"];
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -39,13 +50,13 @@
         </div>
         <!-- Menu -->
         <nav class="flex-1 p-3 space-y-1">
-            <a href="index.html"      class="nav-link active">📊 <span>Dashboard</span></a>
-            <a href="cursos.html"     class="nav-link">📚 <span>Cursos</span></a>
+            <a href="index.php"      class="nav-link active">📊 <span>Dashboard</span></a>
+            <a href="cursos.php"     class="nav-link">📚 <span>Cursos</span></a>
             <a href="modulos.html"    class="nav-link">📦 <span>Módulos</span></a>
             <a href="aulas.html"      class="nav-link">🎬 <span>Aulas</span></a>
             <div class="pt-2 border-t border-gray-700 mt-2">
                 <a href="../meus_cursos.html" class="nav-link">👁 <span>Ver site</span></a>
-                <a href="../login.html"       class="nav-link text-red-400 hover:text-red-300">🚪 <span>Sair</span></a>
+                <a href="../login.php"       class="nav-link text-red-400 hover:text-red-300">🚪 <span>Sair</span></a>
             </div>
         </nav>
     </aside>
@@ -73,6 +84,7 @@
                     </div>
                     <p class="text-3xl font-extrabold text-senai-blue">3</p>
                     <p class="text-sm text-gray-500 mt-1">Cursos cadastrados</p>
+                    <h>
                 </div>
                 <div class="bg-white rounded-xl p-5 shadow-sm border-t-4 border-senai-orange">
                     <div class="flex items-center justify-between mb-2">

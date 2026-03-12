@@ -1,3 +1,87 @@
+<?php
+session_start();
+
+require_once "logado_admin.php";
+require_once "conexao.php";
+
+// Variáveis para mensagens
+$sucesso = "";
+$erro = "";
+$editando = NULL;
+if (isset($_GET["editar"])) {
+    $id = $_GET["editar"];
+    $sql = "SELECT * FROM cursos WHERE id = '$id'";
+    $res = mysqli_query($conexao, $sql);
+    $editando = mysqli_fetch_assoc($res);
+}
+if (isset($_GET["excluir"])) {
+    $id = $_GET["excluir"];
+    $sql = "DELETE FROM cursos WHERE id = '$id'";
+    $res = mysqli_query($conexao, $sql);
+}
+// Verificar se o formulário de cadastro foi enviado
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $id  = $_POST["id"];
+    $titulo  = $_POST["titulo"];
+    $descricao = $_POST["descricao"];
+    $capa  = $_FILES["capa"];
+
+      // 3. Tipos permitidos
+    $tiposPermitidos = ["image/jpeg", "image/png", "image/webp"];
+
+    // 4. Validar tipo  
+    if ($capa["size"] > 0 && !in_array($capa["type"], $tiposPermitidos)) {
+        $erro = "Tipo nao permitido. Use JPG, PNG ou WEBP.";
+
+    // 5. Tudo certo: gerar nome e salvar
+    } else {
+        $nomeCapa = '';
+        if($capa["size"] > 0){
+            $extensao   = pathinfo($capa["name"], PATHINFO_EXTENSION);
+            $nomeImagem = "capacurso_" . time() . "." . $extensao;
+            move_uploaded_file($capa["tmp_name"], "uploads/usuario/" . $nomeImagem);
+        }      
+        // Verificar se o email já existe
+        //$sql = "SELECT * FROM cursos WHERE email = '$email'";
+        //$resultado = mysqli_query($conexao, $sql);      
+        if (mysqli_num_rows($resultado) > 0 && $editando !== NULL) {
+            $erro = "Este curso já está cadastrado.";
+        } else {
+            if($id){
+                if($capa["size"] > 0){
+                    $sql = "UPDATE cursos SET 
+                    id  = '$id',
+                    titulo  = '$titulo',
+                    descricao = '$descricao',
+                    capa  = '$capa'
+                    WHERE id = $id
+                    ";
+                }else{
+                    $sql = "UPDATE cliente SET 
+                    id  = '$id',
+                    titulo  = '$titulo',
+                    descricao = '$descricao',
+                    capa  = '$capa'
+                    WHERE id = $id
+                    ";
+                }              
+                $sucesso = "Curso atualizado com sucesso!";
+            }else{
+                if($foto["size"] > 0){
+                    $sql = "INSERT INTO cursos (titulo, descricao, capa) VALUES ('$titulo', '$descricao', '$capa')";
+                }else{
+                    $sql = "INSERT INTO cursos (titulo, descricao) VALUES ('$titulo', '$descricao')";
+                }                
+                $sucesso = "Curso cadastrado com sucesso!";
+            }
+            if (!mysqli_query($conexao, $sql)) {
+                $erro = "Erro ao cadastrar curso.";
+            }            
+        }
+    }    
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -85,6 +169,7 @@
                                 <input
                                     type="text"
                                     name="titulo"
+                                    id="titulo"   
                                     class="form-input"
                                     placeholder="Ex: HTML e CSS do Zero"
                                     value="HTML e CSS do Zero"
@@ -98,6 +183,7 @@
                                 <textarea
                                     name="descricao"
                                     rows="4"
+                                    id="descricao"   
                                     class="form-input resize-none"
                                     placeholder="Descreva o curso, o que o aluno vai aprender..."
                                 >Aprenda a criar páginas web profissionais do início ao fim, com projetos práticos e exemplos reais.</textarea>
@@ -113,7 +199,7 @@
                                         <span class="text-3xl">🌐</span>
                                     </div>
                                     <p class="text-xs text-gray-500 mb-2">Capa atual. Clique para alterar.</p>
-                                    <input type="file" name="capa" accept="image/*" class="hidden" id="input-capa">
+                                    <input type="file" name="capa" id="capa" accept="image/*" class="hidden" id="input-capa">
                                     <label for="input-capa" class="bg-white border border-gray-300 text-gray-600 text-xs font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-gray-50 transition">
                                         Selecionar nova imagem
                                     </label>
@@ -127,11 +213,12 @@
                                 <div class="flex gap-4">
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="ativo" value="1" checked class="accent-senai-green">
+                                        <input type="radio" name="intaivo" value="0" <? $editando && $editando['intativo'] ? 'checked' : ''?> class="accent-gray-400">
                                         <span class="text-sm text-gray-700">Ativo — Visível para os alunos</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="ativo" value="0" class="accent-gray-400">
-                                        <span class="text-sm text-gray-500">Inativo — Oculto para os alunos</span>
+                                        <input type="radio" name="ativo" value="0" <? $editando && !$editando['ativo'] ? 'checked' : ''?> class="accent-gray-400">
+                                        <span class="text-sm text-gray-500">Inativo — Oculto para os alunos</span>                                        
                                     </label>
                                 </div>
                             </div>

@@ -1,3 +1,7 @@
+<?php
+$sql = "SELECT * FROM cursos ORDER BY id DESC";
+$res = mysqli_query($conexao, $sql);
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -36,13 +40,13 @@
             </div>
         </div>
         <nav class="flex-1 p-3 space-y-1">
-            <a href="index.html"      class="nav-link">📊 <span>Dashboard</span></a>
-            <a href="cursos.html"     class="nav-link active">📚 <span>Cursos</span></a>
+            <a href="index.php"      class="nav-link">📊 <span>Dashboard</span></a>
+            <a href="cursos.php"     class="nav-link active">📚 <span>Cursos</span></a>
             <a href="modulos.html"    class="nav-link">📦 <span>Módulos</span></a>
             <a href="aulas.html"      class="nav-link">🎬 <span>Aulas</span></a>
             <div class="pt-2 border-t border-gray-700 mt-2">
                 <a href="../meus_cursos.html" class="nav-link">👁 <span>Ver site</span></a>
-                <a href="../login.html"       class="nav-link text-red-400 hover:text-red-300">🚪 <span>Sair</span></a>
+                <a href="../login.php"       class="nav-link text-red-400 hover:text-red-300">🚪 <span>Sair</span></a>
             </div>
         </nav>
     </aside>
@@ -56,7 +60,7 @@
                 <h1 class="text-xl font-extrabold text-gray-800">Gerenciar Cursos</h1>
                 <p class="text-sm text-gray-500">Cadastre, edite e organize os cursos da plataforma</p>
             </div>
-            <a href="curso_form.html" class="bg-senai-green text-white font-bold px-4 py-2.5 rounded-lg text-sm hover:bg-green-600 transition flex items-center gap-2">
+            <a href="curso_form.php" class="bg-senai-green text-white font-bold px-4 py-2.5 rounded-lg text-sm hover:bg-green-600 transition flex items-center gap-2">
                 + Novo Curso
             </a>
         </div>
@@ -86,9 +90,12 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
+                        <?php
+                        $sql = "SELECT id, titulo, descricao, capa, criado_em FROM cursos ORDER BY id DESC";
+                        $res = mysqli_query($conexao, $sql);
 
-                        <!-- CURSO 1 -->
-                        <tr class="hover:bg-gray-50 transition">
+                        while ($row = mysqli_fetch_assoc($res))?>                              
+                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 text-gray-400 font-mono text-xs">1</td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
@@ -96,8 +103,8 @@
                                         <span class="text-lg">🌐</span>
                                     </div>
                                     <div>
-                                        <p class="font-semibold text-gray-800">HTML e CSS do Zero</p>
-                                        <p class="text-xs text-gray-400 mt-0.5">Aprenda a criar páginas web...</p>
+                                        <p class="font-semibold text-gray-800"><? echo $u["titulo"]; ?></p>
+                                        <p class="text-xs text-gray-400 mt-0.5"><? echo $u["descricao"]; ?></p>
                                     </div>
                                 </div>
                             </td>
@@ -105,18 +112,18 @@
                             <td class="px-4 py-3 text-center text-gray-600 font-semibold">9</td>
                             <td class="px-4 py-3 text-center text-gray-600 font-semibold">14</td>
                             <td class="px-4 py-3 text-center">
-                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Ativo</span>
+                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full"><? echo $u["ativo"]; ?></span>
                             </td>
-                            <td class="px-4 py-3 text-center text-xs text-gray-400">01/01/2025</td>
+                            <td class="px-4 py-3 text-center text-xs text-gray-400"><? echo $u["criado_em"]; ?></td>
                             <td class="px-4 py-3 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="modulos.html" class="bg-senai-blue text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-senai-blue-dark transition" title="Ver Módulos">📦 Módulos</a>
-                                    <a href="curso_form.html" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition" title="Editar">✏ Editar</a>
+                                    <a href="curso_form.php" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition" title="Editar">✏ Editar</a>
                                     <button onclick="return confirm('Excluir este curso?')" class="bg-senai-red text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-red-700 transition" title="Excluir">🗑</button>
                                 </div>
                             </td>
-                        </tr>
-
+                        </tr>                        
+                        
                         <!-- CURSO 2 -->
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 text-gray-400 font-mono text-xs">2</td>
@@ -141,7 +148,7 @@
                             <td class="px-4 py-3 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="modulos.html" class="bg-senai-blue text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-senai-blue-dark transition">📦 Módulos</a>
-                                    <a href="curso_form.html" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition">✏ Editar</a>
+                                    <a href="curso_form.php" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition">✏ Editar</a>
                                     <button onclick="return confirm('Excluir este curso?')" class="bg-senai-red text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-red-700 transition">🗑</button>
                                 </div>
                             </td>
@@ -171,7 +178,7 @@
                             <td class="px-4 py-3 text-center">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <a href="modulos.html" class="bg-senai-blue text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-senai-blue-dark transition">📦 Módulos</a>
-                                    <a href="curso_form.html" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition">✏ Editar</a>
+                                    <a href="curso_form.php" class="bg-yellow-500 text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-yellow-600 transition">✏ Editar</a>
                                     <button onclick="return confirm('Excluir este curso?')" class="bg-senai-red text-white text-xs px-2.5 py-1.5 rounded-md hover:bg-red-700 transition">🗑</button>
                                 </div>
                             </td>

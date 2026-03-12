@@ -1,52 +1,37 @@
 <?php
-
-// Iniciar a sessão
+// login.php
 session_start();
-
-// Se já está logado, redireciona para o dashboard
-if (isset($_SESSION["usuario_id"])) {
-    header("Location: index.html");
-    exit;
-}
-
-// Incluir o arquivo de conexão com o banco
 require_once "conexao.php";
-require_once "logado.php";
-
-// Variável para armazenar mensagem de erro
 $erro = "";
 
-// Verificar se o formulário foi enviado (method POST)
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    
-    $email = $_POST["email"];
-    $senha = $_POST["senha"];
-
-    // Buscar o usuário no banco pelo email
+// Processa o formulário quando enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = mysqli_real_escape_string($conexao, $_POST["email"]);
+    $senha = $_POST["senha"];    
+    // Busca usuário pelo e-mail
     $sql = "SELECT * FROM usuarios WHERE email = '$email'";
-    $resultado = mysqli_query($conexao, $sql);
-
-    // Verificar se encontrou o usuário
-    if ($usuario = mysqli_fetch_assoc($resultado)) {
-
-        // Verificar se a senha está correta
+    $result = mysqli_query($conexao, $sql);    
+    
+        if ($usuario = mysqli_fetch_assoc($result)){}        
+        // Verifica a senha com password_verify
         if (password_verify($senha, $usuario["senha"])) {
-            // Guardar dados do usuário na sessão
+            // Salva dados na sessão
             $_SESSION["usuario_id"] = $usuario["id"];
             $_SESSION["usuario_nome"] = $usuario["nome"];
-            $_SESSION["usuario_email"] = $usuario["email"];
-
-            // Redirecionar para o dashboard
-            header("Location: index.html");
-            exit;
-        } else {
-            $erro = "Email ou senha incorretos.";
+            $_SESSION["usuario_tipo"] = $usuario["tipo"];            
+            // Redireciona conforme o tipo de usuário
+            if ($_SESSION ($usuario["tipo"] == "admin")) {
+                header("Location: admin/index.php");
+                exit;
+            } else {
+                header("Location: meus_cursos.php");
+                exit;
+            }
+        } else { $erro = "❌ E-mail ou senha inválidos!";
         }
-    } else {
-        $erro = "Email ou senha incorretos.";
     }
-}
 ?>
+<!-- HTML do formulário de login aqui -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -103,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     </div>
 
                     <!-- FORMULÁRIO -->
-                    <form action="index.html" method="get">
+                    <form action="login.php" method="get">
                         <div class="mb-4">
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">E-mail</label>
                             <div class="relative">
@@ -149,11 +134,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="mt-4 bg-yellow-50 border border-yellow-300 rounded-lg p-3 text-xs text-gray-600 text-center">
                 <strong>Admin?</strong> Use <span class="font-mono bg-white px-1 rounded">admin@ead.com</span> /
                 <span class="font-mono bg-white px-1 rounded">admin123</span> →
-                <a href="admin/index.html" class="text-senai-blue underline font-semibold">Painel Admin</a>
+                <a href="admin/index.php" class="text-senai-blue underline font-semibold">Painel Admin</a>
             </div>
 
             <p class="text-center text-xs text-gray-400 mt-5">
-                <a href="index.html" class="hover:text-senai-blue transition">← Voltar à página inicial</a>
+                <a href="index.php" class="hover:text-senai-blue transition">← Voltar à página inicial</a>
             </p>
 
         </div>
@@ -163,6 +148,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <footer class="bg-senai-blue text-blue-200 text-center text-xs py-3">
         SENAI — Sistema EAD &nbsp;|&nbsp; Todos os direitos reservados
     </footer>
-
 </body>
 </html>

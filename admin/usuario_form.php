@@ -6,6 +6,7 @@ require_once "includes/menu.php";
 $sucesso = "";
 $erro = "";
 $editando = NULL;
+
 if (isset($_GET["editar"])) {
     $id = $_GET["editar"];
     $sql = "SELECT * FROM usuarios WHERE id = '$id'";
@@ -17,7 +18,6 @@ if (isset($_GET["excluir"])) {
     $sql = "DELETE FROM usuarios WHERE id = '$id'";
     $res = mysqli_query($conexao, $sql);
 }
-
 // Verificar se o formulário de cadastro foi enviado
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
